@@ -69,6 +69,10 @@ public class SceneManagerController : MonoBehaviour
     {
         SceneManager.LoadScene(cutsceneLevel1SceneName);
     }
+    public void LoadCutsceneLevel2()
+    {
+        SceneManager.LoadScene("SecondCutscene");
+    }
 
     public void LoadLevel2()
     {
@@ -79,7 +83,7 @@ public class SceneManagerController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            LoadLevel2();
+            LoadCutsceneLevel2();
         }
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+
 public class PlayerController : MonoBehaviour
 {
     [Header("References")]
@@ -23,7 +24,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private int maxJumps = 1;
     [SerializeField] private float gravity = -20f;
-    
 
     [Header("Climbing")]
     public bool canClimb = false;
@@ -43,8 +43,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private KeyCode ballToggleKey = KeyCode.LeftShift;
 
     [Header("Sprint")]
-    [SerializeField] private float sprintMultiplier = 1.5f; 
-    public bool IsRunning { get; private set; } 
+    [SerializeField] private float sprintMultiplier = 1.5f;
+    public bool IsRunning { get; private set; }
 
     [Header("HyperRoll Dash")]
     public float dashForce = 50f;
@@ -53,14 +53,14 @@ public class PlayerController : MonoBehaviour
     public bool isDashing = false;
 
     [Header("Ball Boost System")]
-    [SerializeField] private KeyCode boostKey = KeyCode.F; 
-    [SerializeField] private float ballBoostSpeed = 25f;   
-    [SerializeField] private float maxBoostEnergy = 100f;  
-    [SerializeField] private float boostDrainSpeed = 20f;  
+    [SerializeField] private KeyCode boostKey = KeyCode.F;
+    [SerializeField] private float ballBoostSpeed = 25f;
+    [SerializeField] private float maxBoostEnergy = 100f;
+    [SerializeField] private float boostDrainSpeed = 20f;
     [SerializeField] private float boostRechargeSpeed = 20f;
 
     [Header("Boost UI Visuals")]
-    [SerializeField] private UnityEngine.UI.Image boostScreenTint; 
+    [SerializeField] private UnityEngine.UI.Image boostScreenTint;
     [SerializeField] private Color boostColorTint = new Color(1f, 0f, 0f, 0.15f);
     [SerializeField] private Slider boostSlider;
 
@@ -77,8 +77,33 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject trailRendererObject;
     [SerializeField] private ParticleSystem jumpVFXSystem;
 
+    [Header("SFX")]
+    [SerializeField] private AudioSource sfxSource;
 
-    
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip runClip;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip doubleJumpClip;
+    [SerializeField] private AudioClip hyperRollClip;
+    [SerializeField] private AudioClip climbClip;
+    [SerializeField] private AudioClip enemyDamageClip;
+
+    [Header("SFX Volumes")]
+    [Range(0f, 1f)][SerializeField] private float walkVolume = 0.4f;
+    [Range(0f, 1f)][SerializeField] private float runVolume = 0.5f;
+    [Range(0f, 1f)][SerializeField] private float jumpVolume = 0.65f;
+    [Range(0f, 1f)][SerializeField] private float doubleJumpVolume = 0.75f;
+    [Range(0f, 1f)][SerializeField] private float hyperRollVolume = 0.8f;
+    [Range(0f, 1f)][SerializeField] private float climbVolume = 0.45f;
+    [Range(0f, 1f)][SerializeField] private float enemyDamageVolume = 0.8f;
+
+    [Header("SFX Timing")]
+    [SerializeField] private float walkStepRate = 0.45f;
+    [SerializeField] private float runStepRate = 0.28f;
+    [SerializeField] private float climbStepRate = 0.35f;
+
+    private float footstepTimer;
+    private float climbSFXTimer;
 
     private Rigidbody ballRb;
     private Vector3 velocity;
@@ -101,6 +126,9 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         if (controller == null) controller = GetComponent<CharacterController>();
+
+        if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
+
         if (ballObject != null)
         {
             ballRb = ballObject.GetComponent<Rigidbody>();
@@ -110,10 +138,6 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        climbTimer = maxClimbTime;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         climbTimer = maxClimbTime;
@@ -137,25 +161,32 @@ public class PlayerController : MonoBehaviour
         {
             HandleBallMovement();
             HandleDash();
-            
 
             if (Input.GetButtonDown("Jump"))
             {
-                if (Mathf.Abs(ballRb.linearVelocity.y) < 0.1f)
+                if (ballRb != null && Mathf.Abs(ballRb.linearVelocity.y) < 0.1f)
+                {
                     ballRb.AddForce(Vector3.up * jumpHeight * 2f, ForceMode.Impulse);
+                    PlaySFX(jumpClip, jumpVolume);
+                }
             }
         }
-
         else if (controller.enabled)
         {
             WallCheck();
-            if (IsClimbing) HandleClimbingMovement();
+
+            if (IsClimbing)
+            {
+                HandleClimbingMovement();
+            }
             else
             {
                 HandleMovement();
                 HandleGravity();
             }
+
             HandleJump();
+            HandleMovementSFX();
         }
         else
         {
@@ -181,6 +212,8 @@ public class PlayerController : MonoBehaviour
     {
         velocity.y = 0;
         controller.Move(Vector3.up * climbSpeed * Time.deltaTime);
+
+        climbTimer -= Time.deltaTime;
     }
 
     private void HandleMovement()
@@ -192,7 +225,6 @@ public class PlayerController : MonoBehaviour
 
         IsRunning = Input.GetKey(KeyCode.LeftControl) && CurrentMoveAmount > 0;
         float currentSpeed = IsRunning ? moveSpeed * sprintMultiplier : moveSpeed;
-        
 
         Vector3 moveDirection = (playerCamera.forward * vertical + playerCamera.right * horizontal);
         moveDirection.y = 0;
@@ -221,10 +253,13 @@ public class PlayerController : MonoBehaviour
             {
                 IsClimbing = false;
                 velocity.y = wallJumpUpForce;
+
                 Vector3 bounceDir = frontWallHit.normal * wallJumpBackForce;
                 velocity.x = bounceDir.x;
                 velocity.z = bounceDir.z;
+
                 animationController?.PlayJump();
+                PlaySFX(jumpClip, jumpVolume);
 
                 if (jumpVFXSystem != null)
                 {
@@ -237,11 +272,13 @@ public class PlayerController : MonoBehaviour
 
                 if (jumpCount == 0)
                 {
-                    animationController?.PlayJump(); 
+                    animationController?.PlayJump();
+                    PlaySFX(jumpClip, jumpVolume);
                 }
                 else
                 {
                     animationController?.PlayDoubleJump();
+                    PlaySFX(doubleJumpClip, doubleJumpVolume);
                 }
 
                 if (jumpVFXSystem != null) jumpVFXSystem.Play(true);
@@ -261,6 +298,50 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    private void HandleMovementSFX()
+    {
+        if (IsClimbing)
+        {
+            HandleClimbSFX();
+            footstepTimer = 0f;
+            return;
+        }
+
+        if (!controller.isGrounded || CurrentMoveAmount <= 0.1f)
+        {
+            footstepTimer = 0f;
+            climbSFXTimer = 0f;
+            return;
+        }
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer <= 0f)
+        {
+            if (IsRunning)
+            {
+                PlaySFX(runClip, runVolume);
+                footstepTimer = runStepRate;
+            }
+            else
+            {
+                PlaySFX(walkClip, walkVolume);
+                footstepTimer = walkStepRate;
+            }
+        }
+    }
+
+    private void HandleClimbSFX()
+    {
+        climbSFXTimer -= Time.deltaTime;
+
+        if (climbSFXTimer <= 0f)
+        {
+            PlaySFX(climbClip, climbVolume);
+            climbSFXTimer = climbStepRate;
+        }
+    }
+
     private IEnumerator ToggleBallModeRoutine()
     {
         PlayerStats stats = GetComponent<PlayerStats>();
@@ -271,6 +352,7 @@ public class PlayerController : MonoBehaviour
         }
 
         isTransforming = true;
+
         if (transformationEffect != null)
         {
             transformationEffect.transform.position = transform.position + Vector3.up * 0.5f;
@@ -282,6 +364,7 @@ public class PlayerController : MonoBehaviour
         if (IsBallMode)
         {
             if (ballTrailSystem != null) ballTrailSystem.Play();
+
             if (trailRendererObject != null)
             {
                 trailRendererObject.SetActive(true);
@@ -320,6 +403,7 @@ public class PlayerController : MonoBehaviour
             controller.enabled = true;
             humanVisuals.SetActive(true);
         }
+
         isTransforming = false;
     }
 
@@ -327,11 +411,14 @@ public class PlayerController : MonoBehaviour
     {
         if (IsBallMode && Input.GetMouseButtonDown(0) && Time.time > dashTimer)
         {
-            Rigidbody rb = GetComponentInChildren<Rigidbody>(); 
+            Rigidbody rb = GetComponentInChildren<Rigidbody>();
+
             if (rb != null)
             {
                 Vector3 dashDir = playerCamera.forward;
                 rb.AddForce(dashDir * dashForce, ForceMode.Impulse);
+
+                PlaySFX(hyperRollClip, hyperRollVolume);
 
                 isDashing = true;
                 dashTimer = Time.time + dashCooldown;
@@ -340,6 +427,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     private void HandleBoostEnergy()
     {
         if (currentBoostEnergy >= maxBoostEnergy)
@@ -367,7 +455,7 @@ public class PlayerController : MonoBehaviour
         {
             if (isBoosting)
             {
-                canStartBoost = false; 
+                canStartBoost = false;
             }
 
             isBoosting = false;
@@ -389,7 +477,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void ResetDash() { isDashing = false; }
+    void ResetDash()
+    {
+        isDashing = false;
+    }
 
     private void HandleBallMovement()
     {
@@ -417,21 +508,37 @@ public class PlayerController : MonoBehaviour
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+
         transform.Rotate(0f, mouseX, 0f);
+
         pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
+
         if (cameraPivot != null) cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void PlaySFX(AudioClip clip, float volume)
+    {
+        if (clip == null) return;
+        if (sfxSource == null) return;
+
+        sfxSource.PlayOneShot(clip, volume);
+    }
+
+    public void PlayEnemyDamageSFX()
+    {
+        PlaySFX(enemyDamageClip, enemyDamageVolume);
     }
 
     public void UnlockDoubleJump()
     {
-        maxJumps = 2; 
+        maxJumps = 2;
         Debug.Log("Dvojskok odemknut!");
     }
 
     public void UnlockClimbing()
     {
         canClimb = true;
-        climbSpeed = 4f; 
+        climbSpeed = 4f;
         Debug.Log("Lezení odemknuto!");
     }
 }

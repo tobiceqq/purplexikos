@@ -5,14 +5,14 @@ using UnityEngine.Events;
 
 public class TutorialTrigger : MonoBehaviour
 {
-    [Header("Reference na UI v Canvasu")]
+    
     public GameObject tutorialPanel;
     public TextMeshProUGUI titleUI; 
     public Image imageUI; 
 
 
 
-    [Header("Nastavení pro TENTO trigger")]
+    
     public string titleText;
     public Sprite tutorialSprite;
     public UnityEvent onGotItPressed;

@@ -159,10 +159,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '"Everything was proceeding according to plan."'
+  m_text: Everything was proceeding according to plan.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -333,8 +333,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: To surpass the limits of life itself.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -524,8 +524,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: To surpass the limits of speed.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -677,8 +677,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Project PURPLEX was created for a single purpose.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -986,8 +986,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: To surpass the limits of energy.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1309,8 +1309,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: The subject exceeded all expectations.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
-  m_sharedMaterial: {fileID: 5758282220502469472, guid: abd20abb6370e1545b1f6ab4c798515f, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
+  m_sharedMaterial: {fileID: -4305956190198752555, guid: 89d599529902ff24ea8a099c891e7857, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
