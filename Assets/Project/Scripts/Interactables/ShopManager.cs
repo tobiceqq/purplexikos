@@ -9,7 +9,7 @@ public class ShopManager : MonoBehaviour
     public void OpenShop()
     {
         shopUI.SetActive(true);
-        Time.timeScale = 0f; 
+        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -30,8 +30,8 @@ public class ShopManager : MonoBehaviour
         {
             stats.energy -= price;
 
-            
-            stats.UpdateUI();      
+
+            stats.UpdateUI();
 
             stats.hasHyperRoll = true;
             Debug.Log("4. ÚSPÌCH: HyperRoll koupen! Zbývá energie: " + stats.energy);
@@ -46,7 +46,7 @@ public class ShopManager : MonoBehaviour
     public void CloseShop()
     {
         shopUI.SetActive(false);
-        Time.timeScale = 1f; 
+        Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

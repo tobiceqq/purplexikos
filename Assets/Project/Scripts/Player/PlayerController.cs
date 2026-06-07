@@ -148,6 +148,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f)
+            return;
+
         if (Input.GetKeyDown(ballToggleKey) && !isTransforming)
         {
             StartCoroutine(ToggleBallModeRoutine());
